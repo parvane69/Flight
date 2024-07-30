@@ -1,4 +1,5 @@
-﻿using Flight.Domain.Entities;
+﻿using Flight.Application.Subscriptions.Dto;
+using Flight.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,11 @@ namespace Flight.Infrastructure.Repositories
             return await _context.Subscriptions
             .Where(s => s.Agency_Id == agencyId)
             .ToListAsync();
+        }
+        public async Task<int> AddSubscriptions(List<Domain.Entities.Subscriptions> items)
+        {
+            await _context.Subscriptions.AddRangeAsync(items);
+            return 1;
         }
     }
 }
