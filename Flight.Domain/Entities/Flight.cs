@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Portal.Domain.Entities
+namespace Flight.Domain.Entities
 {
     public class Flights : EntityBase
     {

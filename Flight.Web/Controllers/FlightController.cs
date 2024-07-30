@@ -65,7 +65,11 @@ namespace Flight.Web.Controllers
             using (var stream = new StreamReader(file.OpenReadStream()))
             using (var csv = new CsvReader(stream, CultureInfo.InvariantCulture))
             {
-                var records = csv.GetRecords<RouteInputDto>();
+                var records = csv.GetRecords<RouteInputDto>().ToList();
+                var result = await _mediator.Send(new RouteCommand
+                {
+                    Items = records,
+                });
             }
 
             return Ok("File uploaded and data saved successfully.");

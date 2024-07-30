@@ -4,6 +4,7 @@ using Flight.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Flight.Infrastructure.Migrations
 {
     [DbContext(typeof(FlightDbContext))]
-    partial class FlightDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240730065833_route-id-deleted")]
+    partial class routeiddeleted
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,21 +42,13 @@ namespace Flight.Infrastructure.Migrations
                     b.Property<DateTime>("Departure_Time")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("RouteId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("RouteId");
 
                     b.ToTable("Flights");
                 });
 
             modelBuilder.Entity("Flight.Domain.Entities.Routes", b =>
                 {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Departure_City_Id")
                         .HasColumnType("int");
 
@@ -62,8 +57,6 @@ namespace Flight.Infrastructure.Migrations
 
                     b.Property<int>("Origin_City_Id")
                         .HasColumnType("int");
-
-                    b.HasKey("Id");
 
                     b.HasIndex("Departure_City_Id", "Origin_City_Id", "Departure_Date")
                         .IsUnique();
@@ -91,22 +84,6 @@ namespace Flight.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Subscriptions");
-                });
-
-            modelBuilder.Entity("Flight.Domain.Entities.Flights", b =>
-                {
-                    b.HasOne("Flight.Domain.Entities.Routes", "Route")
-                        .WithMany("Flights")
-                        .HasForeignKey("RouteId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Route");
-                });
-
-            modelBuilder.Entity("Flight.Domain.Entities.Routes", b =>
-                {
-                    b.Navigation("Flights");
                 });
 #pragma warning restore 612, 618
         }

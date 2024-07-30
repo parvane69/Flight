@@ -1,7 +1,6 @@
 ﻿using Flight.Domain.Entities;
 using Flight.Infrastructure.Persistence.Config;
 using Microsoft.EntityFrameworkCore;
-using Portal.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;

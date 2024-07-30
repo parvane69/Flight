@@ -25,7 +25,7 @@ namespace Flight.Application.Routes.Dto
         public required DateOnly Departure_Date { get; set; }
 
     }
-    public class RouteInputDtos : IRequest<int>, ICommittableRequest
+    public class RouteCommand : IRequest<int>, ICommittableRequest
     {
         public List<RouteInputDto> Items { get; set; }
 

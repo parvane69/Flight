@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using Portal.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +21,9 @@ namespace Flight.Infrastructure.Persistence.Config
                      .HasConversion<DateOnlyConverter, DateOnlyComparer>();
             builder.HasIndex(e => new { e.Departure_City_Id, e.Origin_City_Id, e.Departure_Date })
             .IsUnique();
+            builder
+            .Property(r => r.Id)
+            .ValueGeneratedNever();
         }
     }
 }
