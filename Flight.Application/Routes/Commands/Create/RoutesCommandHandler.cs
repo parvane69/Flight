@@ -27,7 +27,7 @@ namespace Flight.Application.Routes.Commands.Create
             try
             {
                 var model = _mapper.Map<List<RouteInputDto>, List<Domain.Entities.Routes>>(request.Items);
-                //await _db.Routes.AddRangeAsync(model);
+                await _unitOfWork.RouteRepository.AddRoutes(model);
                 return 1;
             }
             catch (Exception ex)

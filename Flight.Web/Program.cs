@@ -25,6 +25,7 @@ builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPostPr
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IFlightRepository, FlightRepository>();
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<IRouteRepository, RouteRepository>();
 
 // Add services to the container.
 builder.Services.AddControllers();

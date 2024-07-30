@@ -8,6 +8,7 @@ namespace Flight.Infrastructure
     {
         private readonly FlightDbContext _context;
         private IFlightRepository _flightRepository;
+        private IRouteRepository _routeRepository;
         private ISubscriptionRepository _subscriptionRepository;
 
         public UnitOfWork(FlightDbContext context)
@@ -20,6 +21,14 @@ namespace Flight.Infrastructure
             get
             {
                 return _flightRepository ??= new FlightRepository(_context);
+            }
+        }
+
+        public IRouteRepository RouteRepository
+        {
+            get
+            {
+                return _routeRepository ??= new RouteRepository(_context);
             }
         }
 

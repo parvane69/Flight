@@ -11,6 +11,7 @@ namespace Flight.Application.Interfaces
     {
         IFlightRepository FlightRepository { get; }
         ISubscriptionRepository SubscriptionRepository { get; }
+        IRouteRepository RouteRepository { get; }
         Task<int> SaveChangesAsync();
     }
 }
