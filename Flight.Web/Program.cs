@@ -1,12 +1,23 @@
 ﻿
+using Flight.Application.Common;
 using Flight.Infrastructure;
+using MediatR.Pipeline;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Flight.Application.Subscriptions;
+using System.Reflection;
+using Flight.Application.Subscriptions.Dto;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<FlightDbContext>(options =>
     options.UseSqlServer(connectionString));
+builder.Services.AddAutoMapper(typeof(SubscriptionMapper).GetTypeInfo().Assembly);
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(SubscriptionCommand).GetTypeInfo().Assembly));
+
+builder.Services.AddScoped(typeof(IRequestPostProcessor<,>), typeof(CommitCommandPostProcessor<,>));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>));
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

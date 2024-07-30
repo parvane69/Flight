@@ -1,5 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Formats.Asn1;
+using System.Globalization;
+using CsvHelper;
+using Flight.Application.Subscriptions.Dto;
+using Flight.Application.Routes.Dto;
+using Flight.Application.Flights.Dto;
+using MediatR;
 
 namespace Flight.Web.Controllers
 {
@@ -7,15 +15,60 @@ namespace Flight.Web.Controllers
     [ApiController]
     public class FlightController : ControllerBase
     {
-        [HttpPost("addFlights")]
-        public async void Create()
+        private readonly IMediator _mediator;
+        public FlightController(IMediator mediator)
         {
-            //return await _mediatoR.Send(command);
+            _mediator = mediator;
         }
-        [HttpPost("flights")]
-        public async void Get()
+
+
+        [HttpPost("upload/subscriptions")]
+        public async Task<IActionResult> UploadCsv(IFormFile file)
         {
-            //return await _mediatoR.Send(command);
+            if (file == null || file.Length == 0)
+                return BadRequest("Please upload a valid CSV file.");
+
+            using (var stream = new StreamReader(file.OpenReadStream()))
+            using (var csv = new CsvReader(stream, CultureInfo.InvariantCulture))
+            {
+                var records = csv.GetRecords<SubscriptionInputDto>().ToList();
+                var result = await _mediator.Send(new SubscriptionCommand
+                {
+                    Items = records,
+                });
+            }
+
+            return Ok("File uploaded and data saved successfully.");
+        }
+
+        [HttpPost("upload/flights")]
+        public async Task<IActionResult> UploadCsvFlights(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("Please upload a valid CSV file.");
+
+            using (var stream = new StreamReader(file.OpenReadStream()))
+            using (var csv = new CsvReader(stream, CultureInfo.InvariantCulture))
+            {
+                var records = csv.GetRecords<FlightInputDto>();
+            }
+
+            return Ok("File uploaded and data saved successfully.");
+        }
+
+        [HttpPost("upload/routes")]
+        public async Task<IActionResult> UploadCsvRoutes(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("Please upload a valid CSV file.");
+
+            using (var stream = new StreamReader(file.OpenReadStream()))
+            using (var csv = new CsvReader(stream, CultureInfo.InvariantCulture))
+            {
+                var records = csv.GetRecords<RouteInputDto>();
+            }
+
+            return Ok("File uploaded and data saved successfully.");
         }
     }
 }
