@@ -1,9 +1,7 @@
 ﻿
 
 using Flight.Application.Flights.Dto;
-using Flight.Infrastructure;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,31 +9,29 @@ using System.Threading.Tasks;
 
 namespace Flight.Application.Flights.Queries
 {
+    using Flight.Application.Interfaces;
+    using MediatR;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
 
     public class GetFlightsQueryHandler : IRequestHandler<GetFlightsQuery, List<FlightDto>>
     {
-        private readonly FlightDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GetFlightsQueryHandler(FlightDbContext context)
+        public GetFlightsQueryHandler(IUnitOfWork unitOfWork)
         {
-            _db = context;
+            _unitOfWork = unitOfWork;
         }
+
 
         public async Task<List<FlightDto>> Handle(GetFlightsQuery request, CancellationToken cancellationToken)
         {
-
-            var subscriptions = await _db.Subscriptions
-            .Where(s => s.Agency_Id == request.AgencyId)
-            .ToListAsync(cancellationToken);
-
-            var flights = await _db.Flights
-            .Include(f => f.Route)
-            .Where(f => f.Departure_Time >= request.StartDate && f.Departure_Time <= request.EndDate)
-            .ToListAsync(cancellationToken);
-
-            var allFlights = await _db.Flights
-            .Include(f => f.Route)
-            .ToListAsync(cancellationToken);
+            var subscriptions = await _unitOfWork.SubscriptionRepository.GetSubscriptionsAsync(request.AgencyId);
+            var flights = await _unitOfWork.FlightRepository.GetFlightsAsync(request.StartDate, request.EndDate, request.AgencyId);
+            var allFlights = await _unitOfWork.FlightRepository.GetAllFlightsAsync();
 
             var filteredFlights = flights
             .Where(f => subscriptions.Any(s => s.Origin_City_Id == f.Route.Origin_City_Id && s.Departure_City_Id == f.Route.Departure_City_Id))
@@ -53,6 +49,7 @@ namespace Flight.Application.Flights.Queries
 
             return filteredFlights;
         }
+
         private string DetermineStatus(Domain.Entities.Flights flight, List<Domain.Entities.Flights> allFlights)
         {
             var oneWeek = TimeSpan.FromDays(7);

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Flight.Application.Subscriptions.Dto;
-using Flight.Infrastructure;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -12,12 +11,12 @@ namespace Flight.Application.Subscriptions.Commands.Create
 {
     public class SubscriptionsCommandHandler : IRequestHandler<SubscriptionCommand, int>
     {
-        private readonly FlightDbContext _db;
+        //private readonly FlightDbContext _db;
         private readonly IMapper _mapper;
 
-        public SubscriptionsCommandHandler(FlightDbContext db, IMapper mapper)
+        public SubscriptionsCommandHandler(/*FlightDbContext db, */IMapper mapper)
         {
-            _db = db;
+            //_db = db;
             _mapper = mapper;
         }
 
@@ -26,7 +25,7 @@ namespace Flight.Application.Subscriptions.Commands.Create
             try
             {
                 var model = _mapper.Map<List<SubscriptionInputDto>, List<Domain.Entities.Subscriptions>>(request.Items);
-                await _db.Subscriptions.AddRangeAsync(model);
+               // await _db.Subscriptions.AddRangeAsync(model);
                 return 1;
             }
             catch (Exception ex)

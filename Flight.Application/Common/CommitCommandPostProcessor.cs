@@ -1,30 +1,26 @@
-﻿using Flight.Infrastructure;
+﻿using Flight.Application.Interfaces;
 using MediatR.Pipeline;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Flight.Application.Common
 {
+
     public class CommitCommandPostProcessor<TRequest, TResponse> : IRequestPostProcessor<TRequest, TResponse>
     {
-        private readonly FlightDbContext _db;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CommitCommandPostProcessor(FlightDbContext db)
+        public CommitCommandPostProcessor(IUnitOfWork unitOfWork)
         {
-            _db = db;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task Process(TRequest request, TResponse response, CancellationToken cancellationToken)
         {
             if (request is ICommittableRequest)
             {
-                await _db.SaveChangesAsync();
+                await _unitOfWork.SaveChangesAsync();
             }
-            //return await next();
-
         }
     }
 }

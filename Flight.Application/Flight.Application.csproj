@@ -13,12 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Flights\Commands\" />
+	  <Folder Include="Flights\Commands\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Flight.Domain\Flight.Domain.csproj" />
-    <ProjectReference Include="..\Flight.Infrastructure\Flight.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
