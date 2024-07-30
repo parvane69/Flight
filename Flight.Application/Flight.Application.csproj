@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Flights\Commands\" />
+    <Folder Include="Flights\Dto\" />
     <Folder Include="Flights\Queries\" />
   </ItemGroup>
 

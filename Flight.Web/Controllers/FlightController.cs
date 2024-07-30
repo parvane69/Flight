@@ -41,21 +41,6 @@ namespace Flight.Web.Controllers
             return Ok("File uploaded and data saved successfully.");
         }
 
-        [HttpPost("upload/flights")]
-        public async Task<IActionResult> UploadCsvFlights(IFormFile file)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest("Please upload a valid CSV file.");
-
-            using (var stream = new StreamReader(file.OpenReadStream()))
-            using (var csv = new CsvReader(stream, CultureInfo.InvariantCulture))
-            {
-                var records = csv.GetRecords<FlightInputDto>();
-            }
-
-            return Ok("File uploaded and data saved successfully.");
-        }
-
         [HttpPost("upload/routes")]
         public async Task<IActionResult> UploadCsvRoutes(IFormFile file)
         {
