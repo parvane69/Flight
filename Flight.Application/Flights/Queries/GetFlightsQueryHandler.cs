@@ -23,13 +23,18 @@ namespace Flight.Application.Flights.Queries
 
         public async Task<List<FlightDto>> Handle(GetFlightsQuery request, CancellationToken cancellationToken)
         {
+
             var subscriptions = await _db.Subscriptions
             .Where(s => s.Agency_Id == request.AgencyId)
             .ToListAsync(cancellationToken);
 
             var flights = await _db.Flights
-            .Include(f => f.Route) // اضافه کردن جوین به routes
+            .Include(f => f.Route)
             .Where(f => f.Departure_Time >= request.StartDate && f.Departure_Time <= request.EndDate)
+            .ToListAsync(cancellationToken);
+
+            var allFlights = await _db.Flights
+            .Include(f => f.Route)
             .ToListAsync(cancellationToken);
 
             var filteredFlights = flights
@@ -41,11 +46,33 @@ namespace Flight.Application.Flights.Queries
                 DestinationCityId = f.Route.Departure_City_Id,
                 DepartureTime = f.Departure_Time,
                 ArrivalTime = f.Arival_Time,
-                AirlineId = f.Airline_Id
+                AirlineId = f.Airline_Id,
+                Status = DetermineStatus(f, allFlights)
             })
             .ToList();
 
             return filteredFlights;
+        }
+        private string DetermineStatus(Domain.Entities.Flights flight, List<Domain.Entities.Flights> allFlights)
+        {
+            var oneWeek = TimeSpan.FromDays(7);
+
+            var isNew = !allFlights.Any(f =>
+            f.Airline_Id == flight.Airline_Id &&
+            f.Departure_Time >= flight.Departure_Time - oneWeek &&
+            f.Departure_Time <= flight.Departure_Time - oneWeek);
+
+            var isDiscontinued = !allFlights.Any(f =>
+            f.Airline_Id == flight.Airline_Id &&
+            f.Departure_Time >= flight.Departure_Time + oneWeek &&
+            f.Departure_Time <= flight.Departure_Time + oneWeek);
+
+            if (isNew)
+                return "New";
+            if (isDiscontinued)
+                return "Discontinued";
+
+            return "Existing";
         }
     }
 
