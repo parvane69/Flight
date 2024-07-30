@@ -1,5 +1,3 @@
-
-Project Overview
 This project is based on CQRS and Clean Architecture principles. It utilizes the concepts of Interface Segregation and Dependency Inversion.
 
 Key Features
