@@ -59,5 +59,33 @@ namespace Flight.Web.Controllers
 
             return Ok("File uploaded and data saved successfully.");
         }
+
+
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportFlights([FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int agencyId)
+        {
+            var query = new GetFlightsQuery
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                AgencyId = agencyId
+            };
+
+            var flights = await _mediator.Send(query);
+
+
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var streamWriter = new StreamWriter(memoryStream))
+                using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
+                {
+                    csvWriter.WriteRecords(flights);
+                    streamWriter.Flush();
+                    memoryStream.Position = 0;
+
+                    return File(memoryStream.ToArray(), "text/csv", "flights.csv");
+                }
+            }
+        }
     }
 }
